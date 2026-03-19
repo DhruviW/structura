@@ -28,3 +28,27 @@ app.include_router(projects_router)
 @app.get("/health")
 def health_check():
     return {"status": "ok"}
+
+
+@app.get("/debug/openseespy")
+def debug_openseespy():
+    """Diagnostic: check if OpenSeesPy can be imported."""
+    import sys
+    import platform
+    info = {
+        "python_version": sys.version,
+        "platform": platform.platform(),
+        "machine": platform.machine(),
+    }
+    try:
+        import openseespy.opensees as ops
+        ops.wipe()
+        info["openseespy"] = "OK"
+    except Exception as e:
+        info["openseespy"] = f"FAILED: {e}"
+        try:
+            import opensees
+            info["opensees_direct"] = "OK"
+        except Exception as e2:
+            info["opensees_direct"] = f"FAILED: {e2}"
+    return info
