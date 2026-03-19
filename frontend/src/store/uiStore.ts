@@ -26,6 +26,14 @@ export interface Layers {
   selection: boolean
 }
 
+export interface PreviewState {
+  memberFirstNodeId: number | null
+  plateSelectedNodeIds: number[]
+  cursorWorldPos: { x: number; y: number } | null
+  nearestNodeId: number | null
+  statusText: string
+}
+
 interface UiState {
   activeMode: ActiveMode
   selectedElements: SelectedElement[]
@@ -34,6 +42,9 @@ interface UiState {
   gridSize: number
   zoom: number
   panOffset: { x: number; y: number }
+  previewState: PreviewState
+  pendingSupportNodeId: number | null
+  pendingLoadNodeId: number | null
 }
 
 interface UiActions {
@@ -46,6 +57,23 @@ interface UiActions {
   setZoom: (zoom: number) => void
   setPanOffset: (offset: { x: number; y: number }) => void
   reset: () => void
+  // Preview actions
+  setPreviewMemberFirstNode: (id: number | null) => void
+  setPreviewPlateNodes: (ids: number[]) => void
+  setCursorWorldPos: (pos: { x: number; y: number } | null) => void
+  setNearestNodeId: (id: number | null) => void
+  setStatusText: (text: string) => void
+  setPendingSupportNodeId: (id: number | null) => void
+  setPendingLoadNodeId: (id: number | null) => void
+  clearPreview: () => void
+}
+
+const defaultPreviewState: PreviewState = {
+  memberFirstNodeId: null,
+  plateSelectedNodeIds: [],
+  cursorWorldPos: null,
+  nearestNodeId: null,
+  statusText: '',
 }
 
 const defaultState: UiState = {
@@ -62,6 +90,9 @@ const defaultState: UiState = {
   gridSize: 1.0,
   zoom: 1.0,
   panOffset: { x: 0, y: 0 },
+  previewState: { ...defaultPreviewState, plateSelectedNodeIds: [] },
+  pendingSupportNodeId: null,
+  pendingLoadNodeId: null,
 }
 
 export const useUiStore = create<UiState & UiActions>()(
@@ -114,6 +145,52 @@ export const useUiStore = create<UiState & UiActions>()(
         layers: { ...defaultState.layers },
         selectedElements: [],
         panOffset: { ...defaultState.panOffset },
+        previewState: { ...defaultPreviewState, plateSelectedNodeIds: [] },
+        pendingSupportNodeId: null,
+        pendingLoadNodeId: null,
       })),
+
+    // Preview actions
+    setPreviewMemberFirstNode: (id) =>
+      set((state) => {
+        state.previewState.memberFirstNodeId = id
+      }),
+
+    setPreviewPlateNodes: (ids) =>
+      set((state) => {
+        state.previewState.plateSelectedNodeIds = ids
+      }),
+
+    setCursorWorldPos: (pos) =>
+      set((state) => {
+        state.previewState.cursorWorldPos = pos
+      }),
+
+    setNearestNodeId: (id) =>
+      set((state) => {
+        state.previewState.nearestNodeId = id
+      }),
+
+    setStatusText: (text) =>
+      set((state) => {
+        state.previewState.statusText = text
+      }),
+
+    setPendingSupportNodeId: (id) =>
+      set((state) => {
+        state.pendingSupportNodeId = id
+      }),
+
+    setPendingLoadNodeId: (id) =>
+      set((state) => {
+        state.pendingLoadNodeId = id
+      }),
+
+    clearPreview: () =>
+      set((state) => {
+        state.previewState = { ...defaultPreviewState, plateSelectedNodeIds: [] }
+        state.pendingSupportNodeId = null
+        state.pendingLoadNodeId = null
+      }),
   }))
 )

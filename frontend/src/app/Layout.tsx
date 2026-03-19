@@ -1,4 +1,5 @@
 import { ModeBar } from './ModeBar'
+import { StatusBar } from './StatusBar'
 import { CanvasRoot } from '../canvas/CanvasRoot'
 import { PropertiesPanel } from '../panels/PropertiesPanel'
 import { LayersPanel } from '../panels/LayersPanel'
@@ -28,6 +29,7 @@ export function Layout({ projectId: _projectId, onBack }: LayoutProps = {}) {
           <ResultsPanel />
         </div>
       </div>
+      <StatusBar />
       <div className="bottom-panel">
         <SpreadsheetPanel />
       </div>

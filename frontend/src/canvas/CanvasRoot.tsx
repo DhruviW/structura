@@ -5,12 +5,26 @@ import { Grid } from './Grid'
 import { GeometryLayer } from './layers/GeometryLayer'
 import { LoadsLayer } from './layers/LoadsLayer'
 import { ResultsLayer } from './results/ResultsLayer'
+import { PreviewLayer } from './layers/PreviewLayer'
+import { SupportPopup } from './popups/SupportPopup'
+import { LoadPopup } from './popups/LoadPopup'
 import { useCanvasClick } from './tools/useTool'
 
 const ZOOM_FACTOR_IN = 1.1
 const ZOOM_FACTOR_OUT = 0.9
 const ZOOM_MIN = 0.1
 const ZOOM_MAX = 50
+
+const CURSOR_BY_MODE: Record<string, string> = {
+  select: 'default',
+  node: 'crosshair',
+  member: 'crosshair',
+  plate: 'crosshair',
+  support: 'crosshair',
+  load: 'crosshair',
+  dimension: 'crosshair',
+  annotate: 'text',
+}
 
 export function CanvasRoot() {
   const svgRef = useRef<SVGSVGElement>(null)
@@ -20,6 +34,7 @@ export function CanvasRoot() {
   const panOffset = useUiStore((s) => s.panOffset)
   const gridSize = useUiStore((s) => s.gridSize)
   const layers = useUiStore((s) => s.layers)
+  const activeMode = useUiStore((s) => s.activeMode)
   const setZoom = useUiStore((s) => s.setZoom)
   const setPanOffset = useUiStore((s) => s.setPanOffset)
 
@@ -42,7 +57,7 @@ export function CanvasRoot() {
   }, [])
 
   const coordSystem = new CoordinateSystem(zoom, panOffset, viewport)
-  const handleCanvasClick = useCanvasClick(coordSystem)
+  const { handleClick, handleMouseMove } = useCanvasClick(coordSystem)
 
   // Wheel zoom
   const handleWheel = useCallback(
@@ -70,15 +85,19 @@ export function CanvasRoot() {
     []
   )
 
-  const handleMouseMove = useCallback(
+  const handleMouseMoveCombined = useCallback(
     (e: React.MouseEvent<SVGSVGElement>) => {
-      if (!isPanningRef.current || !lastMouseRef.current) return
-      const dx = e.clientX - lastMouseRef.current.x
-      const dy = e.clientY - lastMouseRef.current.y
-      lastMouseRef.current = { x: e.clientX, y: e.clientY }
-      setPanOffset({ x: panOffset.x + dx, y: panOffset.y + dy })
+      // Pan logic
+      if (isPanningRef.current && lastMouseRef.current) {
+        const dx = e.clientX - lastMouseRef.current.x
+        const dy = e.clientY - lastMouseRef.current.y
+        lastMouseRef.current = { x: e.clientX, y: e.clientY }
+        setPanOffset({ x: panOffset.x + dx, y: panOffset.y + dy })
+      }
+      // Preview/cursor tracking
+      handleMouseMove(e, isPanningRef.current)
     },
-    [panOffset, setPanOffset]
+    [panOffset, setPanOffset, handleMouseMove]
   )
 
   const handleMouseUp = useCallback(() => {
@@ -93,43 +112,56 @@ export function CanvasRoot() {
       lastMouseRef.current = null
       setIsPanning(false)
     }
+    useUiStore.getState().setCursorWorldPos(null)
+    useUiStore.getState().setNearestNodeId(null)
   }, [])
 
+  const modeCursor = CURSOR_BY_MODE[activeMode] ?? 'crosshair'
+  const cursor = isPanning ? 'grabbing' : modeCursor
+
   return (
-    <svg
-      ref={svgRef}
-      style={{
-        width: '100%',
-        height: '100%',
-        display: 'block',
-        cursor: isPanning ? 'grabbing' : 'crosshair',
-        background: '#fafafa',
-      }}
-      onWheel={handleWheel}
-      onMouseDown={handleMouseDown}
-      onMouseMove={handleMouseMove}
-      onMouseUp={handleMouseUp}
-      onMouseLeave={handleMouseLeave}
-      onClick={handleCanvasClick}
-    >
-      {/* Grid layer */}
-      <Grid coordSystem={coordSystem} gridSize={gridSize} />
+    <div style={{ position: 'relative', width: '100%', height: '100%' }}>
+      <svg
+        ref={svgRef}
+        style={{
+          width: '100%',
+          height: '100%',
+          display: 'block',
+          cursor,
+          background: '#fafafa',
+        }}
+        onWheel={handleWheel}
+        onMouseDown={handleMouseDown}
+        onMouseMove={handleMouseMoveCombined}
+        onMouseUp={handleMouseUp}
+        onMouseLeave={handleMouseLeave}
+        onClick={handleClick}
+      >
+        {/* Grid layer */}
+        <Grid coordSystem={coordSystem} gridSize={gridSize} />
 
-      {/* Geometry layer */}
-      {layers.geometry && <GeometryLayer coordSystem={coordSystem} />}
+        {/* Geometry layer */}
+        {layers.geometry && <GeometryLayer coordSystem={coordSystem} />}
 
-      {/* Loads layer */}
-      {layers.loads && <LoadsLayer coordSystem={coordSystem} />}
+        {/* Loads layer */}
+        {layers.loads && <LoadsLayer coordSystem={coordSystem} />}
 
-      {/* Results layer */}
-      {layers.results && <ResultsLayer coordSystem={coordSystem} />}
+        {/* Results layer */}
+        {layers.results && <ResultsLayer coordSystem={coordSystem} />}
 
-      {/* Annotations layer */}
-      {layers.annotations && <g id="layer-annotations" />}
+        {/* Annotations layer */}
+        {layers.annotations && <g id="layer-annotations" />}
 
-      {/* Selection layer */}
-      {layers.selection && <g id="layer-selection" />}
+        {/* Selection layer */}
+        {layers.selection && <g id="layer-selection" />}
 
-    </svg>
+        {/* Preview layer (always on top inside SVG) */}
+        <PreviewLayer coordSystem={coordSystem} />
+      </svg>
+
+      {/* HTML overlays for popups */}
+      <SupportPopup coordSystem={coordSystem} />
+      <LoadPopup coordSystem={coordSystem} />
+    </div>
   )
 }

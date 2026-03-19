@@ -1,30 +1,29 @@
 import { useModelStore } from '../../store/modelStore'
-
-let firstNodeId: number | null = null
+import { useUiStore } from '../../store/uiStore'
 
 export function handleMemberToolClick(nodeId: number) {
-  if (firstNodeId === null) {
-    firstNodeId = nodeId
+  const ui = useUiStore.getState()
+  const firstId = ui.previewState.memberFirstNodeId
+  if (firstId === null) {
+    ui.setPreviewMemberFirstNode(nodeId)
+    ui.setStatusText('Click second node to complete member')
   } else {
-    if (firstNodeId !== nodeId) {
+    if (firstId !== nodeId) {
       const store = useModelStore.getState()
       const id = store.nextMemberId()
-      store.addMember({
-        id,
-        i: firstNodeId,
-        j: nodeId,
-        section: 'default',
-        material: 'default',
-      })
+      store.addMember({ id, i: firstId, j: nodeId, section: 'default', material: 'default' })
     }
-    firstNodeId = null
+    ui.setPreviewMemberFirstNode(null)
+    ui.setStatusText('')
   }
 }
 
 export function resetMemberTool() {
-  firstNodeId = null
+  const ui = useUiStore.getState()
+  ui.setPreviewMemberFirstNode(null)
+  ui.setStatusText('')
 }
 
 export function getMemberToolState() {
-  return { firstNodeId }
+  return { firstNodeId: useUiStore.getState().previewState.memberFirstNodeId }
 }

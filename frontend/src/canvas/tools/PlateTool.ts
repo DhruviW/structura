@@ -1,10 +1,11 @@
 import { useModelStore } from '../../store/modelStore'
-
-const selectedNodes: number[] = []
+import { useUiStore } from '../../store/uiStore'
 
 export function handlePlateToolClick(nodeId: number) {
-  selectedNodes.push(nodeId)
-  if (selectedNodes.length === 4) {
+  const ui = useUiStore.getState()
+  const current = ui.previewState.plateSelectedNodeIds
+  const next = [...current, nodeId]
+  if (next.length === 4) {
     const store = useModelStore.getState()
     const id =
       store.plates.length === 0
@@ -12,19 +13,25 @@ export function handlePlateToolClick(nodeId: number) {
         : Math.max(...store.plates.map((p) => p.id)) + 1
     store.addPlate({
       id,
-      nodes: [selectedNodes[0], selectedNodes[1], selectedNodes[2], selectedNodes[3]],
+      nodes: [next[0], next[1], next[2], next[3]],
       thickness: 0.1,
       material: 'default',
       type: 'shell',
     })
-    selectedNodes.length = 0
+    ui.setPreviewPlateNodes([])
+    ui.setStatusText('')
+  } else {
+    ui.setPreviewPlateNodes(next)
+    ui.setStatusText(`Select node ${next.length + 1} of 4 for plate`)
   }
 }
 
 export function resetPlateTool() {
-  selectedNodes.length = 0
+  const ui = useUiStore.getState()
+  ui.setPreviewPlateNodes([])
+  ui.setStatusText('')
 }
 
 export function getPlateToolState() {
-  return { selectedNodes: [...selectedNodes] }
+  return { selectedNodes: [...useUiStore.getState().previewState.plateSelectedNodeIds] }
 }
