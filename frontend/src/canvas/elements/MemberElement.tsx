@@ -1,3 +1,5 @@
+import React from 'react'
+
 interface MemberElementProps {
   x1: number
   y1: number
@@ -5,7 +7,7 @@ interface MemberElementProps {
   y2: number
   id: number
   selected: boolean
-  onClick?: () => void
+  onClick?: (e: React.MouseEvent) => void
 }
 
 export function MemberElement({ x1, y1, x2, y2, id, selected, onClick }: MemberElementProps) {

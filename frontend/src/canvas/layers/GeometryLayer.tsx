@@ -1,3 +1,4 @@
+import React from 'react'
 import { useModelStore } from '../../store/modelStore'
 import { useUiStore } from '../../store/uiStore'
 import type { CoordinateSystem } from '../CoordinateSystem'
@@ -51,8 +52,8 @@ export function GeometryLayer({ coordSystem }: GeometryLayerProps) {
             points={points}
             id={plate.id}
             selected={isSelected('plate', plate.id)}
-            onClick={() => {
-              clearSelection()
+            onClick={(e?: React.MouseEvent) => {
+              if (!e?.shiftKey) clearSelection()
               selectElement({ type: 'plate', id: plate.id })
             }}
           />
@@ -73,8 +74,8 @@ export function GeometryLayer({ coordSystem }: GeometryLayerProps) {
             y2={posJ.y}
             id={member.id}
             selected={isSelected('member', member.id)}
-            onClick={() => {
-              clearSelection()
+            onClick={(e?: React.MouseEvent) => {
+              if (!e?.shiftKey) clearSelection()
               selectElement({ type: 'member', id: member.id })
             }}
           />
@@ -99,8 +100,8 @@ export function GeometryLayer({ coordSystem }: GeometryLayerProps) {
               screenY={pos.y}
               id={node.id}
               selected={isSelected('node', node.id)}
-              onClick={() => {
-                clearSelection()
+              onClick={(e?: React.MouseEvent) => {
+                if (!e?.shiftKey) clearSelection()
                 selectElement({ type: 'node', id: node.id })
               }}
             />

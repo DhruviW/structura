@@ -3,11 +3,13 @@ interface Point {
   y: number
 }
 
+import React from 'react'
+
 interface PlateElementProps {
   points: Point[]
   id: number
   selected: boolean
-  onClick?: () => void
+  onClick?: (e: React.MouseEvent) => void
 }
 
 function computeCentroid(points: Point[]): Point {

@@ -9,6 +9,7 @@ interface PreviewLayerProps {
 export function PreviewLayer({ coordSystem }: PreviewLayerProps) {
   const activeMode = useUiStore((s) => s.activeMode)
   const previewState = useUiStore((s) => s.previewState)
+  const selectionBox = useUiStore((s) => s.selectionBox)
   const nodes = useModelStore((s) => s.nodes)
 
   const { memberFirstNodeId, plateSelectedNodeIds, cursorWorldPos, nearestNodeId } = previewState
@@ -25,6 +26,27 @@ export function PreviewLayer({ coordSystem }: PreviewLayerProps) {
 
   return (
     <g id="layer-preview">
+      {/* Box selection rectangle */}
+      {selectionBox && (() => {
+        const x = Math.min(selectionBox.startX, selectionBox.endX)
+        const y = Math.min(selectionBox.startY, selectionBox.endY)
+        const width = Math.abs(selectionBox.endX - selectionBox.startX)
+        const height = Math.abs(selectionBox.endY - selectionBox.startY)
+        return (
+          <rect
+            x={x}
+            y={y}
+            width={width}
+            height={height}
+            fill="#2196F3"
+            fillOpacity={0.08}
+            stroke="#2196F3"
+            strokeWidth={1.5}
+            strokeDasharray="6 3"
+            style={{ pointerEvents: 'none' }}
+          />
+        )
+      })()}
       {/* Snap indicator: orange ring on nearest node */}
       {nearestNodeId !== null && (() => {
         const pos = getNodeScreenPos(nearestNodeId)

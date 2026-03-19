@@ -34,6 +34,13 @@ export interface PreviewState {
   statusText: string
 }
 
+export interface SelectionBox {
+  startX: number
+  startY: number
+  endX: number
+  endY: number
+}
+
 interface UiState {
   activeMode: ActiveMode
   selectedElements: SelectedElement[]
@@ -45,6 +52,7 @@ interface UiState {
   previewState: PreviewState
   pendingSupportNodeId: number | null
   pendingLoadNodeId: number | null
+  selectionBox: SelectionBox | null
 }
 
 interface UiActions {
@@ -66,6 +74,9 @@ interface UiActions {
   setPendingSupportNodeId: (id: number | null) => void
   setPendingLoadNodeId: (id: number | null) => void
   clearPreview: () => void
+  // Selection box actions
+  setSelectionBox: (box: SelectionBox | null) => void
+  clearSelectionBox: () => void
 }
 
 const defaultPreviewState: PreviewState = {
@@ -93,6 +104,7 @@ const defaultState: UiState = {
   previewState: { ...defaultPreviewState, plateSelectedNodeIds: [] },
   pendingSupportNodeId: null,
   pendingLoadNodeId: null,
+  selectionBox: null,
 }
 
 export const useUiStore = create<UiState & UiActions>()(
@@ -148,6 +160,7 @@ export const useUiStore = create<UiState & UiActions>()(
         previewState: { ...defaultPreviewState, plateSelectedNodeIds: [] },
         pendingSupportNodeId: null,
         pendingLoadNodeId: null,
+        selectionBox: null,
       })),
 
     // Preview actions
@@ -191,6 +204,16 @@ export const useUiStore = create<UiState & UiActions>()(
         state.previewState = { ...defaultPreviewState, plateSelectedNodeIds: [] }
         state.pendingSupportNodeId = null
         state.pendingLoadNodeId = null
+      }),
+
+    setSelectionBox: (box) =>
+      set((state) => {
+        state.selectionBox = box
+      }),
+
+    clearSelectionBox: () =>
+      set((state) => {
+        state.selectionBox = null
       }),
   }))
 )

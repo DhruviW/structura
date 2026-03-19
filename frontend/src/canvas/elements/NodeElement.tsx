@@ -1,9 +1,11 @@
+import React from 'react'
+
 interface NodeElementProps {
   screenX: number
   screenY: number
   id: number
   selected: boolean
-  onClick?: () => void
+  onClick?: (e: React.MouseEvent) => void
 }
 
 export function NodeElement({ screenX, screenY, id, selected, onClick }: NodeElementProps) {
