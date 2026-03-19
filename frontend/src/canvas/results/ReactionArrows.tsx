@@ -1,4 +1,3 @@
-import React from 'react'
 import { useModelStore } from '../../store/modelStore'
 import { useResultsStore } from '../../store/resultsStore'
 import { LoadArrow } from '../elements/LoadArrow'

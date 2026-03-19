@@ -1,5 +1,3 @@
-import React from 'react'
-
 interface MemberElementProps {
   x1: number
   y1: number

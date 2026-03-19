@@ -18,7 +18,6 @@ export function CanvasRoot() {
 
   const zoom = useUiStore((s) => s.zoom)
   const panOffset = useUiStore((s) => s.panOffset)
-  const gridSnap = useUiStore((s) => s.gridSnap)
   const gridSize = useUiStore((s) => s.gridSize)
   const layers = useUiStore((s) => s.layers)
   const setZoom = useUiStore((s) => s.setZoom)

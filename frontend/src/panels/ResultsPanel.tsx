@@ -1,4 +1,3 @@
-import React from 'react'
 import { useResultsStore } from '../store/resultsStore'
 import type { ActiveResultType } from '../store/resultsStore'
 

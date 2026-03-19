@@ -1,5 +1,5 @@
 import { useRef, useEffect } from 'react'
-import { HotTable } from '@handsontable/react'
+import { HotTable, HotTableClass } from '@handsontable/react'
 import { registerAllModules } from 'handsontable/registry'
 import 'handsontable/styles/handsontable.css'
 import 'handsontable/styles/ht-theme-main.css'
@@ -24,7 +24,7 @@ interface SheetTabProps {
 }
 
 export function SheetTab({ tabKey, columns, columnKeys, data, readOnly = false }: SheetTabProps) {
-  const hotRef = useRef<InstanceType<typeof HotTable>>(null)
+  const hotRef = useRef<HotTableClass>(null)
 
   useEffect(() => {
     const hot = hotRef.current?.hotInstance

@@ -1,4 +1,3 @@
-import React from 'react'
 import { useModelStore } from '../../store/modelStore'
 import { useUiStore } from '../../store/uiStore'
 import type { CoordinateSystem } from '../CoordinateSystem'

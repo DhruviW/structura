@@ -1,4 +1,3 @@
-import React from 'react'
 import { useModelStore } from '../../store/modelStore'
 import type { CoordinateSystem } from '../CoordinateSystem'
 import { LoadArrow } from '../elements/LoadArrow'

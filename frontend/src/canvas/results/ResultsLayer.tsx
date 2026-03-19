@@ -1,4 +1,3 @@
-import React from 'react'
 import { useResultsStore } from '../../store/resultsStore'
 import { MomentDiagram } from './MomentDiagram'
 import { ShearDiagram } from './ShearDiagram'
