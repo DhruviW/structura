@@ -12,10 +12,12 @@ export function handleEraseNode(nodeId: number) {
   for (let i = membersToRemove.length - 1; i >= 0; i--) {
     store.removeMember(membersToRemove[i].id)
   }
-  // Cascade: remove point loads on this node
-  const loadsToRemove = store.loads.filter(l => l.type === 'point' && l.node === nodeId)
-  for (let i = loadsToRemove.length - 1; i >= 0; i--) {
-    store.removeLoad(loadsToRemove[i].id)
+  // Cascade: remove point loads on this node (by index, reversed)
+  for (let i = store.loads.length - 1; i >= 0; i--) {
+    const load = store.loads[i]
+    if (load.type === 'point' && load.node === nodeId) {
+      store.removeLoad(i)
+    }
   }
   store.removeNode(nodeId)
 }

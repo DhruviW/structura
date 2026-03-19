@@ -33,7 +33,7 @@ export function CircleElement({
       stroke={stroke}
       strokeWidth={strokeWidth}
       strokeDasharray={strokeDasharray}
-      style={{ pointerEvents: 'none' }}
+      style={{ pointerEvents: 'inherit' }}
     />
   )
 }

@@ -17,7 +17,7 @@ export function TextElement({ position, text, fontSize = 12, coordSystem }: Text
       fontSize={fontSize}
       fill="#333"
       fontFamily="sans-serif"
-      style={{ pointerEvents: 'none', userSelect: 'none' }}
+      style={{ pointerEvents: 'inherit', userSelect: 'none' }}
     >
       {text}
     </text>

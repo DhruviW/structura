@@ -72,7 +72,7 @@ export function DimensionElement({ p1, p2, offset, text, coordSystem }: Dimensio
   const strokeWidth = 1.5
 
   return (
-    <g style={{ pointerEvents: 'none' }}>
+    <g style={{ pointerEvents: 'inherit' }}>
       {/* Extension lines from endpoints to offset line */}
       <line x1={sp1.x} y1={sp1.y} x2={sop1.x} y2={sop1.y}
         stroke={color} strokeWidth={strokeWidth} />

@@ -28,7 +28,7 @@ export function LeaderElement({ point, textPosition, text, coordSystem }: Leader
   }
 
   return (
-    <g style={{ pointerEvents: 'none' }}>
+    <g style={{ pointerEvents: 'inherit' }}>
       <line
         x1={sText.x}
         y1={sText.y}

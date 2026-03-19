@@ -32,7 +32,7 @@ export function PolylineElement({
         stroke={stroke}
         strokeWidth={strokeWidth}
         strokeDasharray={strokeDasharray}
-        style={{ pointerEvents: 'none' }}
+        style={{ pointerEvents: 'inherit' }}
       />
     )
   }
@@ -44,7 +44,7 @@ export function PolylineElement({
       stroke={stroke}
       strokeWidth={strokeWidth}
       strokeDasharray={strokeDasharray}
-      style={{ pointerEvents: 'none' }}
+      style={{ pointerEvents: 'inherit' }}
     />
   )
 }
