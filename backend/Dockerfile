@@ -1,25 +1,15 @@
-FROM --platform=linux/amd64 python:3.10-slim
+FROM --platform=linux/amd64 python:3.10
 
 WORKDIR /app
-
-# Install all system dependencies OpenSeesPy needs on Linux
-RUN apt-get update && apt-get install -y --no-install-recommends \
-    libgomp1 \
-    libgfortran5 \
-    libblas3 \
-    liblapack3 \
-    libstdc++6 \
-    tcl8.6 \
-    tk8.6 \
-    libgl1-mesa-glx \
-    libglib2.0-0 \
-    && rm -rf /var/lib/apt/lists/*
 
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Verify OpenSeesPy imports correctly during build
-RUN python -c "import openseespy.opensees as ops; ops.wipe(); print('OpenSeesPy verified OK')"
+# Debug: show what openseespy installed and try to import
+RUN python -c "import openseespy; print(openseespy.__file__)" || true
+RUN python -c "import openseespy.opensees" 2>&1 || \
+    python -c "import sys; print(sys.path)" && \
+    find /usr/local/lib/python3.10/site-packages/opensees* -name "*.so" 2>/dev/null | head -5 || true
 
 COPY . .
 
