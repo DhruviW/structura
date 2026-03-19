@@ -1,5 +1,8 @@
 import { useUiStore } from '../store/uiStore'
 import type { ActiveMode } from '../store/uiStore'
+import { useModelStore } from '../store/modelStore'
+import { useResultsStore } from '../store/resultsStore'
+import { runLinearStaticAnalysis } from '../api/analyzeApi'
 
 interface ModeButton {
   mode: ActiveMode
@@ -21,6 +24,22 @@ const MODE_BUTTONS: ModeButton[] = [
 export function ModeBar() {
   const activeMode = useUiStore((s) => s.activeMode)
   const setActiveMode = useUiStore((s) => s.setActiveMode)
+  const isAnalyzing = useResultsStore((s) => s.isAnalyzing)
+  const setIsAnalyzing = useResultsStore((s) => s.setIsAnalyzing)
+  const setResults = useResultsStore((s) => s.setResults)
+
+  async function handleRunAnalysis() {
+    const model = useModelStore.getState().toModelJSON()
+    setIsAnalyzing(true)
+    try {
+      const results = await runLinearStaticAnalysis(model)
+      setResults(results)
+    } catch (err) {
+      alert(err instanceof Error ? err.message : 'Analysis failed')
+    } finally {
+      setIsAnalyzing(false)
+    }
+  }
 
   return (
     <div className="mode-bar">
@@ -35,8 +54,12 @@ export function ModeBar() {
         </button>
       ))}
       <div className="mode-bar-spacer" />
-      <button className="mode-btn run-btn" onClick={() => {}}>
-        Run Analysis
+      <button
+        className="mode-btn run-btn"
+        onClick={handleRunAnalysis}
+        disabled={isAnalyzing}
+      >
+        {isAnalyzing ? 'Analyzing...' : 'Run Analysis'}
       </button>
     </div>
   )
