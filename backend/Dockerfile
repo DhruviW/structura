@@ -1,15 +1,20 @@
-FROM --platform=linux/amd64 python:3.10
+FROM --platform=linux/amd64 python:3.10-slim
 
 WORKDIR /app
+
+# OpenSeesPy requires libblas, liblapack, libgfortran, libgomp
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    libblas3 \
+    liblapack3 \
+    libgfortran5 \
+    libgomp1 \
+    && rm -rf /var/lib/apt/lists/*
 
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Debug: show what openseespy installed and try to import
-RUN python -c "import openseespy; print(openseespy.__file__)" || true
-RUN python -c "import openseespy.opensees" 2>&1 || \
-    python -c "import sys; print(sys.path)" && \
-    find /usr/local/lib/python3.10/site-packages/opensees* -name "*.so" 2>/dev/null | head -5 || true
+# Verify OpenSeesPy loads correctly
+RUN python -c "import openseespy.opensees as ops; ops.wipe(); print('OpenSeesPy OK')"
 
 COPY . .
 
