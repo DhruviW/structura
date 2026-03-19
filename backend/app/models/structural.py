@@ -15,13 +15,17 @@ class Node(BaseModel):
     id: int
     x: float
     y: float
+    z: float = 0.0
     restraints: List[int]
 
     @field_validator('restraints')
     @classmethod
     def validate_restraints(cls, v: List[int]) -> List[int]:
-        if len(v) != 3:
-            raise ValueError('restraints must have exactly 3 components (Fx, Fy, Mz)')
+        if len(v) == 3:
+            # Backwards-compatible: pad 3-DOF restraints to 6-DOF with zeros
+            v = v + [0, 0, 0]
+        if len(v) != 6:
+            raise ValueError('restraints must have exactly 6 components [Ux, Uy, Uz, Rx, Ry, Rz]')
         for val in v:
             if val not in (0, 1):
                 raise ValueError(f'Each restraint value must be 0 or 1, got {val}')
@@ -89,6 +93,7 @@ class Section(BaseModel):
     Iz: float   # Second moment of area about z (m⁴)
     Iy: float   # Second moment of area about y (m⁴)
     J: float    # Torsional constant (m⁴)
+    Ix: float = 0.0  # Moment of inertia about x (torsional rigidity, m⁴)
     Sz: float   # Section modulus about z (m³)
     Sy: float   # Section modulus about y (m³)
 
@@ -101,6 +106,9 @@ class PointLoad(BaseModel):
     node: int
     Fx: float
     Fy: float
+    Fz: float = 0.0
+    Mx: float = 0.0
+    My: float = 0.0
     Mz: float
 
 
@@ -110,12 +118,15 @@ class DistributedLoad(BaseModel):
     member: int
     wx: float
     wy: float
+    wz: float = 0.0
 
 
 class MomentLoad(BaseModel):
     id: int = 0
     type: Literal['moment']
     node: int
+    Mx: float = 0.0
+    My: float = 0.0
     Mz: float
 
 

@@ -72,8 +72,12 @@ _BLOCK_FIXED  = "FIXED_SUPPORT"
 
 
 def _determine_support_type(restraints: list[int]) -> Optional[str]:
-    """Return block name for the node's restraints, or None if free."""
-    rx, ry, rz = restraints
+    """Return block name for the node's restraints, or None if free.
+    Works with both 3-DOF [Ux, Uy, Rz] and 6-DOF [Ux, Uy, Uz, Rx, Ry, Rz] restraints.
+    """
+    rx = restraints[0]
+    ry = restraints[1]
+    rz = restraints[2] if len(restraints) == 3 else restraints[5]
     if rx == 1 and ry == 1 and rz == 1:
         return _BLOCK_FIXED
     if rx == 1 and ry == 1 and rz == 0:
@@ -313,7 +317,7 @@ def _draw_results(
         nj = node_map[member.j]
         mx = (ni.x + nj.x) / 2
         my = (ni.y + nj.y) / 2
-        m_max = max(abs(forces.M[0]), abs(forces.M[1]))
+        m_max = max(abs(forces.Mz[0]), abs(forces.Mz[1]))
         msp.add_text(
             f"Mmax={m_max/1000:.1f}kNm",
             dxfattribs={
@@ -322,7 +326,7 @@ def _draw_results(
                 "insert": (mx, my + node_radius * 4),
             },
         )
-        v_max = max(abs(forces.V[0]), abs(forces.V[1]))
+        v_max = max(abs(forces.Vy[0]), abs(forces.Vy[1]))
         msp.add_text(
             f"Vmax={v_max/1000:.1f}kN",
             dxfattribs={

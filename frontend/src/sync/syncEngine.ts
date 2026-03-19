@@ -47,7 +47,7 @@ export class SyncEngine {
         case 'nodes': {
           const node = store.nodes[rowIndex]
           if (!node) break
-          if (column === 'id' || column === 'x' || column === 'y') {
+          if (column === 'id' || column === 'x' || column === 'y' || column === 'z') {
             store.updateNode(node.id, { [column]: value } as Partial<typeof node>)
           } else if (column === 'restraints') {
             store.updateNode(node.id, { restraints: value as Restraints })
@@ -97,14 +97,14 @@ export class SyncEngine {
     switch (tab) {
       case 'nodes':
         return store.nodes.map((n) => {
-          // Derive support type from restraints [Ux, Uy, Rz]
-          const [ux, uy, rz] = n.restraints
+          // Derive support type from restraints [Ux, Uy, Uz, Rx, Ry, Rz]
+          const [ux, uy, uz, rx, ry, rz] = n.restraints
           let supportType: string
-          if (ux === 1 && uy === 1 && rz === 1) supportType = 'fixed'
+          if (ux === 1 && uy === 1 && uz === 1 && rx === 1 && ry === 1 && rz === 1) supportType = 'fixed'
           else if (ux === 1 && uy === 1 && rz === 0) supportType = 'pin'
           else if (ux === 0 && uy === 1 && rz === 0) supportType = 'roller'
           else supportType = 'none'
-          return [n.id, n.x, n.y, supportType, ux, uy, rz]
+          return [n.id, n.x, n.y, n.z, supportType, ux, uy, uz, rx, ry, rz]
         })
 
       case 'members':

@@ -1,7 +1,7 @@
 // ─── Primitive Types ──────────────────────────────────────────────────────────
 
 export type DOF = 0 | 1
-export type Restraints = [DOF, DOF, DOF]
+export type Restraints = [DOF, DOF, DOF, DOF, DOF, DOF]
 export type SupportType = 'pin' | 'roller' | 'fixed' | 'none'
 export type PlateType = 'shell' | 'membrane'
 export type LoadType = 'point' | 'distributed' | 'moment'
@@ -12,6 +12,7 @@ export interface StructuralNode {
   id: number
   x: number
   y: number
+  z: number
   restraints: Restraints
 }
 
@@ -48,6 +49,7 @@ export interface Section {
   Iz: number  // Moment of inertia about z
   Iy: number  // Moment of inertia about y
   J: number   // Torsional constant
+  Ix: number  // Moment of inertia about x (for torsional rigidity)
   Sz: number  // Section modulus about z
   Sy: number  // Section modulus about y
 }
@@ -59,6 +61,9 @@ export interface PointLoad {
   node: number
   Fx: number
   Fy: number
+  Fz: number
+  Mx: number
+  My: number
   Mz: number
 }
 
@@ -67,11 +72,14 @@ export interface DistributedLoad {
   member: number
   wx: number
   wy: number
+  wz: number
 }
 
 export interface MomentLoad {
   type: 'moment'
   node: number
+  Mx: number
+  My: number
   Mz: number
 }
 
@@ -134,8 +142,9 @@ export function isValidNode(obj: unknown): obj is StructuralNode {
   if (typeof o.id !== 'number') return false
   if (typeof o.x !== 'number') return false
   if (typeof o.y !== 'number') return false
+  if (typeof o.z !== 'number') return false
   if (!Array.isArray(o.restraints)) return false
-  if (o.restraints.length !== 3) return false
+  if (o.restraints.length !== 6) return false
   if (!o.restraints.every((v: unknown) => v === 0 || v === 1)) return false
   return true
 }

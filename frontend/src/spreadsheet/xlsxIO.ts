@@ -12,7 +12,7 @@ const REQUIRED_SHEET_NAMES: SheetName[] = ['Nodes', 'Members', 'Plates', 'Materi
 
 // Column headers per sheet (matches getTabData output order)
 const HEADERS: Record<string, string[]> = {
-  Nodes: ['ID', 'X', 'Y', 'Support', 'Ux', 'Uy', 'Rz'],
+  Nodes: ['ID', 'X', 'Y', 'Z', 'Support', 'Ux', 'Uy', 'Uz', 'Rx', 'Ry', 'Rz'],
   Members: ['ID', 'Start Node', 'End Node', 'Section', 'Material'],
   Plates: ['ID', 'Node 1', 'Node 2', 'Node 3', 'Node 4', 'Thickness', 'Material', 'Type'],
   Materials: ['ID', 'Name', 'E (Pa)', 'G (Pa)', 'ν', 'ρ (kg/m³)', 'fy (Pa)'],
@@ -76,7 +76,15 @@ export function importFromXlsx(wb: XLSX.WorkBook): void {
         id: Number(row['ID']),
         x: Number(row['X']),
         y: Number(row['Y']),
-        restraints: [Number(row['Ux']) as 0 | 1, Number(row['Uy']) as 0 | 1, Number(row['Rz']) as 0 | 1],
+        z: Number(row['Z'] ?? 0),
+        restraints: [
+          Number(row['Ux'] ?? 0) as 0 | 1,
+          Number(row['Uy'] ?? 0) as 0 | 1,
+          Number(row['Uz'] ?? 0) as 0 | 1,
+          Number(row['Rx'] ?? 0) as 0 | 1,
+          Number(row['Ry'] ?? 0) as 0 | 1,
+          Number(row['Rz'] ?? 0) as 0 | 1,
+        ],
       }
       store.addNode(node)
     }
@@ -149,6 +157,7 @@ export function importFromXlsx(wb: XLSX.WorkBook): void {
         Iz: Number(row['Iz']),
         Iy: Number(row['Iy']),
         J: Number(row['J']),
+        Ix: Number(row['Ix'] ?? 0),
         Sz: Number(row['Sz']),
         Sy: Number(row['Sy']),
       }
@@ -169,11 +178,14 @@ export function importFromXlsx(wb: XLSX.WorkBook): void {
           member: Number(row['Target']),
           wx: Number(row['Fx/wx'] ?? 0),
           wy: Number(row['Fy/wy'] ?? 0),
+          wz: 0,
         }
       } else if (loadType === 'moment') {
         load = {
           type: 'moment',
           node: Number(row['Target']),
+          Mx: 0,
+          My: 0,
           Mz: Number(row['Mz'] ?? 0),
         }
       } else {
@@ -182,6 +194,9 @@ export function importFromXlsx(wb: XLSX.WorkBook): void {
           node: Number(row['Target']),
           Fx: Number(row['Fx/wx'] ?? 0),
           Fy: Number(row['Fy/wy'] ?? 0),
+          Fz: 0,
+          Mx: 0,
+          My: 0,
           Mz: Number(row['Mz'] ?? 0),
         }
       }

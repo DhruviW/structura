@@ -13,7 +13,8 @@ describe('NodeTool', () => {
     expect(nodes).toHaveLength(1)
     expect(nodes[0].x).toBe(3)
     expect(nodes[0].y).toBe(5)
-    expect(nodes[0].restraints).toEqual([0, 0, 0])
+    expect(nodes[0].z).toBe(0)
+    expect(nodes[0].restraints).toEqual([0, 0, 0, 0, 0, 0])
   })
 
   it('auto-increments node IDs', () => {

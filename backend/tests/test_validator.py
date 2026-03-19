@@ -5,8 +5,8 @@ from app.solver.validator import validate_model
 def make_simple_beam():
     return StructuralModel(
         nodes=[
-            Node(id=1, x=0.0, y=0.0, restraints=[1, 1, 0]),
-            Node(id=2, x=5.0, y=0.0, restraints=[0, 1, 0]),
+            Node(id=1, x=0.0, y=0.0, restraints=[1, 1, 0, 0, 0, 0]),
+            Node(id=2, x=5.0, y=0.0, restraints=[0, 1, 0, 0, 0, 0]),
         ],
         members=[Member(id=1, i=1, j=2, section="W10x49", material="A36")],
         plates=[],
@@ -41,7 +41,7 @@ class TestValidator:
     def test_model_has_no_supports(self):
         model = make_simple_beam()
         for node in model.nodes:
-            node.restraints = [0, 0, 0]
+            node.restraints = [0, 0, 0, 0, 0, 0]
         errors = validate_model(model)
         assert any("support" in e.lower() or "restraint" in e.lower() for e in errors)
 

@@ -20,11 +20,12 @@ def make_model_and_results():
     )
     results = AnalysisResults(
         displacements=[
-            NodeDisplacement(node=1, ux=0, uy=0, rz=0),
-            NodeDisplacement(node=2, ux=0, uy=-0.01, rz=0),
+            NodeDisplacement(node=1, ux=0, uy=0, uz=0, rx=0, ry=0, rz=0),
+            NodeDisplacement(node=2, ux=0, uy=-0.01, uz=0, rx=0, ry=0, rz=0),
         ],
-        member_forces=[MemberForces(id=1, N=[0, 0], V=[25000, -25000], M=[0, 62500])],
-        reactions=[Reaction(node=1, Fx=0, Fy=25000, Mz=0)],
+        member_forces=[MemberForces(id=1, N=[0, 0], Vy=[25000, -25000], Vz=[0, 0],
+                                    T=[0, 0], My=[0, 0], Mz=[0, 62500])],
+        reactions=[Reaction(node=1, Fx=0, Fy=25000, Fz=0, Mx=0, My=0, Mz=0)],
         plate_stresses=[],
     )
     return model, results

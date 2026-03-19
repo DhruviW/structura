@@ -8,7 +8,7 @@ describe('xlsx I/O', () => {
   })
 
   it('exports model to xlsx workbook with correct sheet names', () => {
-    useModelStore.getState().addNode({ id: 1, x: 0, y: 0, restraints: [1, 1, 1] })
+    useModelStore.getState().addNode({ id: 1, x: 0, y: 0, z: 0, restraints: [1, 1, 1, 0, 0, 0] })
     const wb = exportToXlsx()
     expect(wb.SheetNames).toContain('Nodes')
     expect(wb.SheetNames).toContain('Members')

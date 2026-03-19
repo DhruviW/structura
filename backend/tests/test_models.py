@@ -27,10 +27,23 @@ from app.models.results import (
 # ─── Node ─────────────────────────────────────────────────────────────────────
 
 class TestNodeModel:
-    def test_valid_node(self):
-        node = Node(id=1, x=0.0, y=0.0, restraints=[1, 1, 1])
+    def test_valid_node_6dof(self):
+        node = Node(id=1, x=0.0, y=0.0, restraints=[1, 1, 1, 0, 0, 0])
         assert node.id == 1
-        assert node.restraints == [1, 1, 1]
+        assert node.restraints == [1, 1, 1, 0, 0, 0]
+
+    def test_valid_node_3dof_backwards_compat(self):
+        # 3-DOF restraints are padded to 6 for backwards compatibility
+        node = Node(id=1, x=0.0, y=0.0, restraints=[1, 1, 0])
+        assert node.restraints == [1, 1, 0, 0, 0, 0]
+
+    def test_valid_node_has_z_default(self):
+        node = Node(id=1, x=0.0, y=0.0, restraints=[1, 1, 1, 0, 0, 0])
+        assert node.z == 0.0
+
+    def test_valid_node_with_z(self):
+        node = Node(id=1, x=0.0, y=0.0, z=5.0, restraints=[1, 1, 1, 0, 0, 0])
+        assert node.z == 5.0
 
     def test_rejects_invalid_restraint_length(self):
         with pytest.raises(ValidationError):
@@ -38,7 +51,7 @@ class TestNodeModel:
 
     def test_rejects_restraint_out_of_range(self):
         with pytest.raises(ValidationError):
-            Node(id=1, x=0.0, y=0.0, restraints=[1, 2, 0])
+            Node(id=1, x=0.0, y=0.0, restraints=[1, 2, 0, 0, 0, 0])
 
 
 # ─── Member ───────────────────────────────────────────────────────────────────
@@ -100,8 +113,8 @@ class TestStructuralModel:
     def test_valid_complete_model(self):
         model = StructuralModel(
             nodes=[
-                Node(id=1, x=0.0, y=0.0, restraints=[1, 1, 1]),
-                Node(id=2, x=5.0, y=0.0, restraints=[0, 0, 0]),
+                Node(id=1, x=0.0, y=0.0, restraints=[1, 1, 1, 0, 0, 0]),
+                Node(id=2, x=5.0, y=0.0, restraints=[0, 0, 0, 0, 0, 0]),
             ],
             members=[
                 Member(id=1, i=1, j=2, section='W10x49', material='A36'),
@@ -126,20 +139,34 @@ class TestStructuralModel:
 
 class TestResultsModel:
     def test_member_forces_have_two_end_values(self):
-        mf = MemberForces(id=1, N=[100.0, -100.0], V=[50.0, -50.0], M=[0.0, 200.0])
+        mf = MemberForces(id=1, N=[100.0, -100.0], Vy=[50.0, -50.0], Vz=[0.0, 0.0],
+                          T=[0.0, 0.0], My=[0.0, 0.0], Mz=[0.0, 200.0])
         assert len(mf.N) == 2
-        assert len(mf.V) == 2
-        assert len(mf.M) == 2
+        assert len(mf.Vy) == 2
+        assert len(mf.Mz) == 2
 
     def test_member_forces_rejects_wrong_length(self):
         with pytest.raises(ValidationError):
-            MemberForces(id=1, N=[100.0], V=[50.0, -50.0], M=[0.0, 200.0])
+            MemberForces(id=1, N=[100.0], Vy=[50.0, -50.0], Vz=[0.0, 0.0],
+                         T=[0.0, 0.0], My=[0.0, 0.0], Mz=[0.0, 200.0])
+
+    def test_node_displacement_has_6_components(self):
+        nd = NodeDisplacement(node=1, ux=0.0, uy=0.0, uz=0.0, rx=0.0, ry=0.0, rz=0.0)
+        assert nd.uz == 0.0
+        assert nd.rx == 0.0
+        assert nd.ry == 0.0
+
+    def test_reaction_has_6_components(self):
+        r = Reaction(node=1, Fx=0.0, Fy=10000.0, Fz=0.0, Mx=0.0, My=0.0, Mz=0.0)
+        assert r.Fz == 0.0
+        assert r.Mx == 0.0
 
     def test_full_analysis_results(self):
         results = AnalysisResults(
-            displacements=[NodeDisplacement(node=1, ux=0.0, uy=0.0, rz=0.0)],
-            member_forces=[MemberForces(id=1, N=[0.0, 0.0], V=[5000.0, -5000.0], M=[0.0, 25000.0])],
-            reactions=[Reaction(node=1, Fx=0.0, Fy=10000.0, Mz=0.0)],
+            displacements=[NodeDisplacement(node=1, ux=0.0, uy=0.0, uz=0.0, rx=0.0, ry=0.0, rz=0.0)],
+            member_forces=[MemberForces(id=1, N=[0.0, 0.0], Vy=[5000.0, -5000.0], Vz=[0.0, 0.0],
+                                        T=[0.0, 0.0], My=[0.0, 0.0], Mz=[0.0, 25000.0])],
+            reactions=[Reaction(node=1, Fx=0.0, Fy=10000.0, Fz=0.0, Mx=0.0, My=0.0, Mz=0.0)],
             plate_stresses=[],
         )
         assert len(results.displacements) == 1
