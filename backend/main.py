@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import os
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
@@ -23,6 +25,30 @@ app.add_middleware(
 app.include_router(analyze_router)
 app.include_router(dxf_router)
 app.include_router(projects_router)
+
+
+@app.on_event("startup")
+async def startup():
+    from app.db.database import init_db, async_session
+    from app.db.orm_models import Profile
+    from sqlalchemy import select
+
+    await init_db()
+
+    # Ensure the dev-mode user profile exists in the database
+    async with async_session() as session:
+        existing = (
+            await session.execute(select(Profile).where(Profile.id == "dev-user"))
+        ).scalar_one_or_none()
+        if existing is None:
+            session.add(Profile(id="dev-user", display_name="Dev User"))
+            await session.commit()
+
+
+@app.on_event("shutdown")
+async def shutdown():
+    from app.db.database import close_db
+    await close_db()
 
 
 @app.get("/health")
