@@ -96,6 +96,7 @@ class Section(BaseModel):
 # ─── Loads ────────────────────────────────────────────────────────────────────
 
 class PointLoad(BaseModel):
+    id: int = 0
     type: Literal['point']
     node: int
     Fx: float
@@ -104,6 +105,7 @@ class PointLoad(BaseModel):
 
 
 class DistributedLoad(BaseModel):
+    id: int = 0
     type: Literal['distributed']
     member: int
     wx: float
@@ -111,6 +113,7 @@ class DistributedLoad(BaseModel):
 
 
 class MomentLoad(BaseModel):
+    id: int = 0
     type: Literal['moment']
     node: int
     Mz: float
