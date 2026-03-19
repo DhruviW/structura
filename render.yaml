@@ -6,9 +6,9 @@ services:
     dockerContext: backend
     plan: free
     envVars:
+      - key: CORS_ORIGINS
+        value: "https://dhruviw.github.io,http://localhost:5173"
       - key: SUPABASE_URL
         sync: false
       - key: SUPABASE_SERVICE_KEY
-        sync: false
-      - key: CORS_ORIGINS
         sync: false
