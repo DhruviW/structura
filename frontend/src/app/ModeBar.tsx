@@ -19,6 +19,7 @@ const MODE_BUTTONS: ModeButton[] = [
   { mode: 'load', label: 'Load', shortcut: 'L' },
   { mode: 'dimension', label: 'Dimension', shortcut: 'D' },
   { mode: 'annotate', label: 'Annotate', shortcut: 'A' },
+  { mode: 'erase', label: 'Erase', shortcut: 'E' },
 ]
 
 interface AnnotateSubButton {

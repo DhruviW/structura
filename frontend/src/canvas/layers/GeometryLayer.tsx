@@ -7,6 +7,7 @@ import { MemberElement } from '../elements/MemberElement'
 import { PlateElement } from '../elements/PlateElement'
 import { SupportSymbol } from '../elements/SupportSymbol'
 import type { SupportType } from '../../types/model'
+import { handleEraseNode, handleEraseMember, handleErasePlate } from '../tools/EraseTool'
 
 interface GeometryLayerProps {
   coordSystem: CoordinateSystem
@@ -27,6 +28,7 @@ export function GeometryLayer({ coordSystem }: GeometryLayerProps) {
   const selectedElements = useUiStore((s) => s.selectedElements)
   const selectElement = useUiStore((s) => s.selectElement)
   const clearSelection = useUiStore((s) => s.clearSelection)
+  const activeMode = useUiStore((s) => s.activeMode)
 
   function isSelected(type: 'node' | 'member' | 'plate', id: number): boolean {
     return selectedElements.some((el) => el.type === type && el.id === id)
@@ -53,6 +55,7 @@ export function GeometryLayer({ coordSystem }: GeometryLayerProps) {
             id={plate.id}
             selected={isSelected('plate', plate.id)}
             onClick={(e?: React.MouseEvent) => {
+              if (activeMode === 'erase') { handleErasePlate(plate.id); return }
               if (!e?.shiftKey) clearSelection()
               selectElement({ type: 'plate', id: plate.id })
             }}
@@ -75,6 +78,7 @@ export function GeometryLayer({ coordSystem }: GeometryLayerProps) {
             id={member.id}
             selected={isSelected('member', member.id)}
             onClick={(e?: React.MouseEvent) => {
+              if (activeMode === 'erase') { handleEraseMember(member.id); return }
               if (!e?.shiftKey) clearSelection()
               selectElement({ type: 'member', id: member.id })
             }}
@@ -101,6 +105,7 @@ export function GeometryLayer({ coordSystem }: GeometryLayerProps) {
               id={node.id}
               selected={isSelected('node', node.id)}
               onClick={(e?: React.MouseEvent) => {
+                if (activeMode === 'erase') { handleEraseNode(node.id); return }
                 if (!e?.shiftKey) clearSelection()
                 selectElement({ type: 'node', id: node.id })
               }}

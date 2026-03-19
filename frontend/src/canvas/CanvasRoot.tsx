@@ -28,6 +28,7 @@ const CURSOR_BY_MODE: Record<string, string> = {
   load: 'crosshair',
   dimension: 'crosshair',
   annotate: 'text',
+  erase: 'not-allowed',
 }
 
 export function CanvasRoot() {

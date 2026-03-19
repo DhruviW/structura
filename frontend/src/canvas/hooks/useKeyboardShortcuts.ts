@@ -62,6 +62,9 @@ export function useKeyboardShortcuts() {
         case 'a':
           setActiveMode('annotate')
           break
+        case 'e':
+          setActiveMode('erase')
+          break
         case 'Escape':
           setActiveMode('select')
           clearPreview()

@@ -10,6 +10,7 @@ export type ActiveMode =
   | 'load'
   | 'dimension'
   | 'annotate'
+  | 'erase'
 
 export type LayerName = 'geometry' | 'loads' | 'results' | 'annotations' | 'selection'
 export type AnnotateSubMode = 'text' | 'leader' | 'dimension' | 'line' | 'polyline' | 'rectangle' | 'circle'
