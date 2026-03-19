@@ -15,6 +15,9 @@ export function LoadPopup({ coordSystem }: LoadPopupProps) {
 
   const [Fx, setFx] = useState('0')
   const [Fy, setFy] = useState('0')
+  const [Fz, setFz] = useState('0')
+  const [Mx, setMx] = useState('0')
+  const [My, setMy] = useState('0')
   const [Mz, setMz] = useState('0')
 
   if (pendingLoadNodeId === null) return null
@@ -25,10 +28,21 @@ export function LoadPopup({ coordSystem }: LoadPopupProps) {
   const screenPos = coordSystem.worldToScreen(node.x, node.y)
 
   const handleApply = () => {
-    handleLoadToolClick(pendingLoadNodeId, parseFloat(Fx) || 0, parseFloat(Fy) || 0, parseFloat(Mz) || 0)
+    handleLoadToolClick(
+      pendingLoadNodeId,
+      parseFloat(Fx) || 0,
+      parseFloat(Fy) || 0,
+      parseFloat(Fz) || 0,
+      parseFloat(Mx) || 0,
+      parseFloat(My) || 0,
+      parseFloat(Mz) || 0,
+    )
     setPendingLoadNodeId(null)
     setFx('0')
     setFy('0')
+    setFz('0')
+    setMx('0')
+    setMy('0')
     setMz('0')
   }
 
@@ -44,27 +58,27 @@ export function LoadPopup({ coordSystem }: LoadPopupProps) {
       <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
         <label style={{ fontSize: 11 }}>
           Fx (kN):
-          <input
-            type="number"
-            value={Fx}
-            onChange={(e) => setFx(e.target.value)}
-          />
+          <input type="number" value={Fx} onChange={(e) => setFx(e.target.value)} />
         </label>
         <label style={{ fontSize: 11 }}>
           Fy (kN):
-          <input
-            type="number"
-            value={Fy}
-            onChange={(e) => setFy(e.target.value)}
-          />
+          <input type="number" value={Fy} onChange={(e) => setFy(e.target.value)} />
+        </label>
+        <label style={{ fontSize: 11 }}>
+          Fz (kN):
+          <input type="number" value={Fz} onChange={(e) => setFz(e.target.value)} />
+        </label>
+        <label style={{ fontSize: 11 }}>
+          Mx (kNm):
+          <input type="number" value={Mx} onChange={(e) => setMx(e.target.value)} />
+        </label>
+        <label style={{ fontSize: 11 }}>
+          My (kNm):
+          <input type="number" value={My} onChange={(e) => setMy(e.target.value)} />
         </label>
         <label style={{ fontSize: 11 }}>
           Mz (kNm):
-          <input
-            type="number"
-            value={Mz}
-            onChange={(e) => setMz(e.target.value)}
-          />
+          <input type="number" value={Mz} onChange={(e) => setMz(e.target.value)} />
         </label>
       </div>
       <div style={{ marginTop: 6 }}>
