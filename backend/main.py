@@ -1,6 +1,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from app.api.analyze import router as analyze_router
+from app.api.export_dxf import router as dxf_router
 
 app = FastAPI(title="Structural Analysis API", version="0.1.0")
 
@@ -13,6 +14,7 @@ app.add_middleware(
 )
 
 app.include_router(analyze_router)
+app.include_router(dxf_router)
 
 
 @app.get("/health")
