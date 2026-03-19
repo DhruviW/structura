@@ -4,6 +4,7 @@ import { CoordinateSystem } from './CoordinateSystem'
 import { Grid } from './Grid'
 import { GeometryLayer } from './layers/GeometryLayer'
 import { LoadsLayer } from './layers/LoadsLayer'
+import { ResultsLayer } from './results/ResultsLayer'
 import { useCanvasClick } from './tools/useTool'
 
 const ZOOM_FACTOR_IN = 1.1
@@ -122,7 +123,7 @@ export function CanvasRoot() {
       {layers.loads && <LoadsLayer coordSystem={coordSystem} />}
 
       {/* Results layer */}
-      {layers.results && <g id="layer-results" />}
+      {layers.results && <ResultsLayer coordSystem={coordSystem} />}
 
       {/* Annotations layer */}
       {layers.annotations && <g id="layer-annotations" />}

@@ -3,6 +3,7 @@ import { CanvasRoot } from '../canvas/CanvasRoot'
 import { PropertiesPanel } from '../panels/PropertiesPanel'
 import { LayersPanel } from '../panels/LayersPanel'
 import { MaterialLibrary } from '../panels/MaterialLibrary'
+import { ResultsPanel } from '../panels/ResultsPanel'
 import { SpreadsheetPanel } from '../spreadsheet/SpreadsheetPanel'
 
 export function Layout() {
@@ -19,6 +20,7 @@ export function Layout() {
           <PropertiesPanel />
           <LayersPanel />
           <MaterialLibrary />
+          <ResultsPanel />
         </div>
       </div>
       <div className="bottom-panel">
