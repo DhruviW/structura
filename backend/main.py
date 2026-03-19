@@ -46,19 +46,24 @@ def debug_openseespy():
         info["openseespy"] = "OK"
     except Exception as e:
         info["openseespy"] = f"FAILED: {e}"
-        # Check what's installed
-        import subprocess
+        import subprocess, glob, traceback
+        # What pip packages are installed
         result = subprocess.run(["pip", "list"], capture_output=True, text=True)
-        pkgs = [l for l in result.stdout.split("\n") if "opensees" in l.lower()]
-        info["installed_packages"] = pkgs
-        # Check for .so files
-        import glob
-        sos = glob.glob("/usr/local/lib/python*/site-packages/opensees*/**/*.so", recursive=True)
+        info["pkgs"] = [l for l in result.stdout.split("\n") if "opensees" in l.lower()]
+        # Find .so files
+        sos = glob.glob("/usr/local/lib/python*/site-packages/*opensees*/**/*.so", recursive=True)
         info["so_files"] = sos[:10]
-        # Try to get the actual import error
+        # Run ldd on the .so to find missing libs
+        for so in sos[:3]:
+            ldd = subprocess.run(["ldd", so], capture_output=True, text=True)
+            missing = [l.strip() for l in ldd.stdout.split("\n") if "not found" in l]
+            if missing:
+                info[f"missing_libs_{so.split('/')[-1]}"] = missing
+            if ldd.returncode != 0:
+                info[f"ldd_error_{so.split('/')[-1]}"] = ldd.stderr[:200]
+        # Full traceback
         try:
             import openseespy.opensees
-        except Exception as e2:
-            import traceback
-            info["full_traceback"] = traceback.format_exc()
+        except Exception:
+            info["traceback"] = traceback.format_exc()[-500:]
     return info
