@@ -3,11 +3,14 @@ import { useUiStore } from '../../store/uiStore'
 import { Node3D } from '../elements/Node3D'
 import { Member3D } from '../elements/Member3D'
 import { Support3D } from '../elements/Support3D'
+import { handleEraseNode, handleEraseMember } from '../../canvas/tools/EraseTool'
 
 export function GeometryLayer3D() {
   const nodes = useModelStore((s) => s.nodes)
   const members = useModelStore((s) => s.members)
   const selectedElements = useUiStore((s) => s.selectedElements)
+  const activeMode = useUiStore((s) => s.activeMode)
+  const { selectElement, clearSelection } = useUiStore.getState()
 
   const isSelected = (type: string, id: number) =>
     selectedElements.some(el => el.type === type && el.id === id)
@@ -28,6 +31,11 @@ export function GeometryLayer3D() {
             start={[ni.x, ni.z, -ni.y]}
             end={[nj.x, nj.z, -nj.y]}
             selected={isSelected('member', m.id)}
+            onClick={() => {
+              if (activeMode === 'erase') { handleEraseMember(m.id); return }
+              clearSelection()
+              selectElement({ type: 'member', id: m.id })
+            }}
           />
         )
       })}
@@ -37,6 +45,11 @@ export function GeometryLayer3D() {
             id={n.id}
             position={[n.x, n.z, -n.y]}
             selected={isSelected('node', n.id)}
+            onClick={() => {
+              if (activeMode === 'erase') { handleEraseNode(n.id); return }
+              clearSelection()
+              selectElement({ type: 'node', id: n.id })
+            }}
           />
           {n.restraints.some(r => r === 1) && (
             <Support3D
