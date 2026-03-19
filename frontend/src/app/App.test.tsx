@@ -12,8 +12,9 @@ describe('App', () => {
     expect(screen.getByText('Run Analysis')).toBeInTheDocument()
   })
 
-  it('renders spreadsheet placeholder in bottom panel', () => {
+  it('renders spreadsheet panel in bottom panel', () => {
     render(<App />)
-    expect(screen.getByText('Spreadsheet (placeholder)')).toBeInTheDocument()
+    // SpreadsheetPanel renders tab buttons; "Nodes" tab should be present
+    expect(screen.getByText('Nodes')).toBeInTheDocument()
   })
 })
