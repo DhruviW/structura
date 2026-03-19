@@ -6,9 +6,17 @@ import { handleSelectToolClick } from './SelectTool'
 import { handleMemberToolClick, resetMemberTool } from './MemberTool'
 import { handlePlateToolClick, resetPlateTool } from './PlateTool'
 import { findNearestNode } from './snapUtils'
+import { handleDimensionToolClick, resetDimensionTool } from './DimensionTool'
+import { handleTextToolClick, resetTextTool } from './TextTool'
+import { handleLeaderToolClick, resetLeaderTool } from './LeaderTool'
+import { handleLineToolClick, resetLineTool } from './LineTool'
+import { handlePolylineToolClick, handlePolylineToolDoubleClick, resetPolylineTool } from './PolylineTool'
+import { handleRectangleToolClick, resetRectangleTool } from './RectangleTool'
+import { handleCircleToolClick, resetCircleTool } from './CircleTool'
 
 export function useCanvasClick(coordSystem: CoordinateSystem) {
   const activeMode = useUiStore((s) => s.activeMode)
+  const annotateSubMode = useUiStore((s) => s.annotateSubMode)
   const gridSnap = useUiStore((s) => s.gridSnap)
   const gridSize = useUiStore((s) => s.gridSize)
 
@@ -16,6 +24,13 @@ export function useCanvasClick(coordSystem: CoordinateSystem) {
   useEffect(() => {
     resetMemberTool()
     resetPlateTool()
+    resetDimensionTool()
+    resetTextTool()
+    resetLeaderTool()
+    resetLineTool()
+    resetPolylineTool()
+    resetRectangleTool()
+    resetCircleTool()
     useUiStore.getState().clearPreview()
   }, [activeMode])
 
@@ -61,11 +76,41 @@ export function useCanvasClick(coordSystem: CoordinateSystem) {
           if (nearest) useUiStore.getState().setPendingLoadNodeId(nearest.id)
           break
         }
+        case 'dimension':
+          handleDimensionToolClick(world.x, world.y)
+          break
+        case 'annotate':
+          switch (annotateSubMode) {
+            case 'dimension':
+              handleDimensionToolClick(world.x, world.y)
+              break
+            case 'text':
+              handleTextToolClick(world.x, world.y)
+              break
+            case 'leader':
+              handleLeaderToolClick(world.x, world.y)
+              break
+            case 'line':
+              handleLineToolClick(world.x, world.y)
+              break
+            case 'polyline':
+              handlePolylineToolClick(world.x, world.y)
+              break
+            case 'rectangle':
+              handleRectangleToolClick(world.x, world.y)
+              break
+            case 'circle':
+              handleCircleToolClick(world.x, world.y)
+              break
+            default:
+              break
+          }
+          break
         default:
           break
       }
     },
-    [activeMode, gridSnap, gridSize, coordSystem]
+    [activeMode, annotateSubMode, gridSnap, gridSize, coordSystem]
   )
 
   const handleMouseMove = useCallback(
@@ -84,5 +129,15 @@ export function useCanvasClick(coordSystem: CoordinateSystem) {
     [coordSystem, gridSnap, gridSize]
   )
 
-  return { handleClick, handleMouseMove }
+  const handleDoubleClick = useCallback(
+    (e: React.MouseEvent<SVGSVGElement>) => {
+      if (activeMode === 'annotate' && annotateSubMode === 'polyline') {
+        e.preventDefault()
+        handlePolylineToolDoubleClick()
+      }
+    },
+    [activeMode, annotateSubMode]
+  )
+
+  return { handleClick, handleMouseMove, handleDoubleClick }
 }

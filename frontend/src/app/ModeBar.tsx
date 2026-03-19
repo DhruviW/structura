@@ -1,5 +1,5 @@
 import { useUiStore } from '../store/uiStore'
-import type { ActiveMode } from '../store/uiStore'
+import type { ActiveMode, AnnotateSubMode } from '../store/uiStore'
 import { useModelStore } from '../store/modelStore'
 import { useResultsStore } from '../store/resultsStore'
 import { runLinearStaticAnalysis } from '../api/analyzeApi'
@@ -21,6 +21,21 @@ const MODE_BUTTONS: ModeButton[] = [
   { mode: 'annotate', label: 'Annotate', shortcut: 'A' },
 ]
 
+interface AnnotateSubButton {
+  mode: AnnotateSubMode
+  label: string
+}
+
+const ANNOTATE_SUB_BUTTONS: AnnotateSubButton[] = [
+  { mode: 'text', label: 'Text' },
+  { mode: 'leader', label: 'Leader' },
+  { mode: 'dimension', label: 'Dimension' },
+  { mode: 'line', label: 'Line' },
+  { mode: 'polyline', label: 'Polyline' },
+  { mode: 'rectangle', label: 'Rectangle' },
+  { mode: 'circle', label: 'Circle' },
+]
+
 interface ModeBarProps {
   onBack?: () => void
 }
@@ -28,6 +43,8 @@ interface ModeBarProps {
 export function ModeBar({ onBack }: ModeBarProps = {}) {
   const activeMode = useUiStore((s) => s.activeMode)
   const setActiveMode = useUiStore((s) => s.setActiveMode)
+  const annotateSubMode = useUiStore((s) => s.annotateSubMode)
+  const setAnnotateSubMode = useUiStore((s) => s.setAnnotateSubMode)
   const isAnalyzing = useResultsStore((s) => s.isAnalyzing)
   const setIsAnalyzing = useResultsStore((s) => s.setIsAnalyzing)
   const setResults = useResultsStore((s) => s.setResults)
@@ -70,6 +87,20 @@ export function ModeBar({ onBack }: ModeBarProps = {}) {
       >
         {isAnalyzing ? 'Analyzing...' : 'Run Analysis'}
       </button>
+      {activeMode === 'annotate' && (
+        <div className="annotate-sub-bar">
+          {ANNOTATE_SUB_BUTTONS.map(({ mode, label }) => (
+            <button
+              key={mode}
+              className={`mode-btn${annotateSubMode === mode ? ' active' : ''}`}
+              onClick={() => setAnnotateSubMode(mode)}
+              title={label}
+            >
+              {label}
+            </button>
+          ))}
+        </div>
+      )}
     </div>
   )
 }

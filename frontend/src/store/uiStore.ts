@@ -12,6 +12,7 @@ export type ActiveMode =
   | 'annotate'
 
 export type LayerName = 'geometry' | 'loads' | 'results' | 'annotations' | 'selection'
+export type AnnotateSubMode = 'text' | 'leader' | 'dimension' | 'line' | 'polyline' | 'rectangle' | 'circle'
 
 export interface SelectedElement {
   type: 'node' | 'member' | 'plate'
@@ -32,6 +33,13 @@ export interface PreviewState {
   cursorWorldPos: { x: number; y: number } | null
   nearestNodeId: number | null
   statusText: string
+  dimensionFirstPoint: { x: number; y: number } | null
+  lineFirstPoint: { x: number; y: number } | null
+  polylinePoints: { x: number; y: number }[]
+  rectangleFirstCorner: { x: number; y: number } | null
+  circleCenter: { x: number; y: number } | null
+  leaderPoint: { x: number; y: number } | null
+  pendingTextPosition: { x: number; y: number } | null
 }
 
 export interface SelectionBox {
@@ -43,6 +51,7 @@ export interface SelectionBox {
 
 interface UiState {
   activeMode: ActiveMode
+  annotateSubMode: AnnotateSubMode
   selectedElements: SelectedElement[]
   layers: Layers
   gridSnap: boolean
@@ -57,6 +66,7 @@ interface UiState {
 
 interface UiActions {
   setActiveMode: (mode: ActiveMode) => void
+  setAnnotateSubMode: (mode: AnnotateSubMode) => void
   selectElement: (element: SelectedElement) => void
   clearSelection: () => void
   toggleLayer: (layer: LayerName) => void
@@ -85,10 +95,18 @@ const defaultPreviewState: PreviewState = {
   cursorWorldPos: null,
   nearestNodeId: null,
   statusText: '',
+  dimensionFirstPoint: null,
+  lineFirstPoint: null,
+  polylinePoints: [],
+  rectangleFirstCorner: null,
+  circleCenter: null,
+  leaderPoint: null,
+  pendingTextPosition: null,
 }
 
 const defaultState: UiState = {
   activeMode: 'select',
+  annotateSubMode: 'text',
   selectedElements: [],
   layers: {
     geometry: true,
@@ -114,6 +132,11 @@ export const useUiStore = create<UiState & UiActions>()(
     setActiveMode: (mode) =>
       set((state) => {
         state.activeMode = mode
+      }),
+
+    setAnnotateSubMode: (mode) =>
+      set((state) => {
+        state.annotateSubMode = mode
       }),
 
     selectElement: (element) =>
@@ -157,7 +180,7 @@ export const useUiStore = create<UiState & UiActions>()(
         layers: { ...defaultState.layers },
         selectedElements: [],
         panOffset: { ...defaultState.panOffset },
-        previewState: { ...defaultPreviewState, plateSelectedNodeIds: [] },
+        previewState: { ...defaultPreviewState, plateSelectedNodeIds: [], polylinePoints: [] },
         pendingSupportNodeId: null,
         pendingLoadNodeId: null,
         selectionBox: null,
@@ -201,7 +224,7 @@ export const useUiStore = create<UiState & UiActions>()(
 
     clearPreview: () =>
       set((state) => {
-        state.previewState = { ...defaultPreviewState, plateSelectedNodeIds: [] }
+        state.previewState = { ...defaultPreviewState, plateSelectedNodeIds: [], polylinePoints: [] }
         state.pendingSupportNodeId = null
         state.pendingLoadNodeId = null
       }),

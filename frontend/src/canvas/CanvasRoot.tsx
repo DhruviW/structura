@@ -9,6 +9,8 @@ import { ResultsLayer } from './results/ResultsLayer'
 import { PreviewLayer } from './layers/PreviewLayer'
 import { SupportPopup } from './popups/SupportPopup'
 import { LoadPopup } from './popups/LoadPopup'
+import { TextInputPopup } from './popups/TextInputPopup'
+import { AnnotationsLayer } from './layers/AnnotationsLayer'
 import { useCanvasClick } from './tools/useTool'
 import { useKeyboardShortcuts } from './hooks/useKeyboardShortcuts'
 
@@ -70,7 +72,7 @@ export function CanvasRoot() {
   }, [])
 
   const coordSystem = new CoordinateSystem(zoom, panOffset, viewport)
-  const { handleClick, handleMouseMove } = useCanvasClick(coordSystem)
+  const { handleClick, handleMouseMove, handleDoubleClick } = useCanvasClick(coordSystem)
 
   // Wheel zoom
   const handleWheel = useCallback(
@@ -243,6 +245,7 @@ export function CanvasRoot() {
         onMouseUp={handleMouseUp}
         onMouseLeave={handleMouseLeave}
         onClick={handleClick}
+        onDoubleClick={handleDoubleClick}
       >
         {/* Grid layer */}
         <Grid coordSystem={coordSystem} gridSize={gridSize} />
@@ -257,7 +260,7 @@ export function CanvasRoot() {
         {layers.results && <ResultsLayer coordSystem={coordSystem} />}
 
         {/* Annotations layer */}
-        {layers.annotations && <g id="layer-annotations" />}
+        {layers.annotations && <AnnotationsLayer coordSystem={coordSystem} />}
 
         {/* Selection layer */}
         {layers.selection && <g id="layer-selection" />}
@@ -269,6 +272,7 @@ export function CanvasRoot() {
       {/* HTML overlays for popups */}
       <SupportPopup coordSystem={coordSystem} />
       <LoadPopup coordSystem={coordSystem} />
+      <TextInputPopup coordSystem={coordSystem} />
     </div>
   )
 }

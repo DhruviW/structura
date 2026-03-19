@@ -88,6 +88,44 @@ export interface StructuralModel {
   loads: Load[]
 }
 
+// ─── Annotations ─────────────────────────────────────────────────────────────
+
+export interface DimensionAnnotation {
+  id: number; type: 'dimension'
+  p1: { x: number; y: number }; p2: { x: number; y: number }
+  offset: number
+  text?: string
+}
+export interface TextAnnotation {
+  id: number; type: 'text'
+  position: { x: number; y: number }
+  text: string; fontSize?: number
+}
+export interface LeaderAnnotation {
+  id: number; type: 'leader'
+  point: { x: number; y: number }
+  textPosition: { x: number; y: number }
+  text: string
+}
+export interface LineAnnotation {
+  id: number; type: 'line'
+  p1: { x: number; y: number }; p2: { x: number; y: number }
+}
+export interface PolylineAnnotation {
+  id: number; type: 'polyline'
+  points: { x: number; y: number }[]
+  closed: boolean
+}
+export interface RectangleAnnotation {
+  id: number; type: 'rectangle'
+  corner1: { x: number; y: number }; corner2: { x: number; y: number }
+}
+export interface CircleAnnotation {
+  id: number; type: 'circle'
+  center: { x: number; y: number }; radius: number
+}
+export type Annotation = DimensionAnnotation | TextAnnotation | LeaderAnnotation | LineAnnotation | PolylineAnnotation | RectangleAnnotation | CircleAnnotation
+
 // ─── Type Guards ──────────────────────────────────────────────────────────────
 
 export function isValidNode(obj: unknown): obj is StructuralNode {
