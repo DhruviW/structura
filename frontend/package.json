@@ -10,9 +10,13 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@handsontable/react": "^16.2.0",
+    "handsontable": "^17.0.0",
+    "hyperformula": "^3.2.0",
     "immer": "^11.1.4",
     "react": "^19.2.4",
     "react-dom": "^19.2.4",
+    "xlsx": "^0.18.5",
     "zustand": "^5.0.12"
   },
   "devDependencies": {
