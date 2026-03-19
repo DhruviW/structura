@@ -5,10 +5,18 @@ WORKDIR /app
 # Install system dependencies for OpenSeesPy
 RUN apt-get update && apt-get install -y --no-install-recommends \
     libgomp1 \
+    libgfortran5 \
+    libblas3 \
+    liblapack3 \
+    libstdc++6 \
     && rm -rf /var/lib/apt/lists/*
 
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
+
+# Verify OpenSeesPy imports correctly
+RUN python -c "import openseespy.opensees as ops; print('OpenSeesPy OK')" || \
+    echo "WARNING: OpenSeesPy import failed, analysis endpoint will error"
 
 COPY . .
 
