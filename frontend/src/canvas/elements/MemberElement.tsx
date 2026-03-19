@@ -16,9 +16,11 @@ export function MemberElement({ x1, y1, x2, y2, id, selected, onClick }: MemberE
 
   return (
     <g
-      onClick={onClick}
-      style={{ cursor: onClick ? 'pointer' : 'default' }}
+      onClick={(e) => { e.stopPropagation(); onClick?.(e) }}
+      style={{ cursor: onClick ? 'pointer' : 'default', pointerEvents: 'all' }}
     >
+      {/* Invisible wider hit area */}
+      <line x1={x1} y1={y1} x2={x2} y2={y2} stroke="transparent" strokeWidth={12} />
       {selected && (
         <line
           x1={x1}

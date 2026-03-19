@@ -11,9 +11,11 @@ interface NodeElementProps {
 export function NodeElement({ screenX, screenY, id, selected, onClick }: NodeElementProps) {
   return (
     <g
-      onClick={onClick}
-      style={{ cursor: onClick ? 'pointer' : 'default' }}
+      onClick={(e) => { e.stopPropagation(); onClick?.(e) }}
+      style={{ cursor: onClick ? 'pointer' : 'default', pointerEvents: 'all' }}
     >
+      {/* Invisible larger hit area */}
+      <circle cx={screenX} cy={screenY} r={12} fill="transparent" stroke="none" />
       {selected && (
         <circle
           cx={screenX}

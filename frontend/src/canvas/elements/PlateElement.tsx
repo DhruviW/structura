@@ -27,8 +27,8 @@ export function PlateElement({ points, id, selected, onClick }: PlateElementProp
 
   return (
     <g
-      onClick={onClick}
-      style={{ cursor: onClick ? 'pointer' : 'default' }}
+      onClick={(e) => { e.stopPropagation(); onClick?.(e) }}
+      style={{ cursor: onClick ? 'pointer' : 'default', pointerEvents: 'all' }}
     >
       <polygon
         points={pointsStr}

@@ -34,7 +34,8 @@ describe('NodeElement', () => {
       </svg>
     )
     const circles = container.querySelectorAll('circle')
-    expect(circles.length).toBe(1)
+    // 2 circles: invisible hit area + visible node (no selection ring)
+    expect(circles.length).toBe(2)
   })
 
   it('renders a text label with the node id', () => {
