@@ -2,6 +2,9 @@ import React, { useRef, useState, useEffect, useCallback } from 'react'
 import { useUiStore } from '../store/uiStore'
 import { CoordinateSystem } from './CoordinateSystem'
 import { Grid } from './Grid'
+import { GeometryLayer } from './layers/GeometryLayer'
+import { LoadsLayer } from './layers/LoadsLayer'
+import { useCanvasClick } from './tools/useTool'
 
 const ZOOM_FACTOR_IN = 1.1
 const ZOOM_FACTOR_OUT = 0.9
@@ -39,6 +42,7 @@ export function CanvasRoot() {
   }, [])
 
   const coordSystem = new CoordinateSystem(zoom, panOffset, viewport)
+  const handleCanvasClick = useCanvasClick(coordSystem)
 
   // Wheel zoom
   const handleWheel = useCallback(
@@ -106,15 +110,16 @@ export function CanvasRoot() {
       onMouseMove={handleMouseMove}
       onMouseUp={handleMouseUp}
       onMouseLeave={handleMouseLeave}
+      onClick={handleCanvasClick}
     >
       {/* Grid layer */}
       <Grid coordSystem={coordSystem} gridSize={gridSize} />
 
       {/* Geometry layer */}
-      {layers.geometry && <g id="layer-geometry" />}
+      {layers.geometry && <GeometryLayer coordSystem={coordSystem} />}
 
       {/* Loads layer */}
-      {layers.loads && <g id="layer-loads" />}
+      {layers.loads && <LoadsLayer coordSystem={coordSystem} />}
 
       {/* Results layer */}
       {layers.results && <g id="layer-results" />}
@@ -125,8 +130,6 @@ export function CanvasRoot() {
       {/* Selection layer */}
       {layers.selection && <g id="layer-selection" />}
 
-      {/* Debug: suppress unused warning */}
-      {gridSnap && null}
     </svg>
   )
 }
