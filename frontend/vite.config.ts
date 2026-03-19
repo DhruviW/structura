@@ -26,6 +26,16 @@ export default defineConfig({
         find: '@handsontable/react',
         replacement: '/Users/dhruviwadhwana/Desktop/Claude project/structural-analysis-tool/frontend/src/__mocks__/@handsontable/react.tsx',
       },
+      // Mock Supabase so auth calls are no-ops in tests
+      {
+        find: '@supabase/supabase-js',
+        replacement: '/Users/dhruviwadhwana/Desktop/Claude project/structural-analysis-tool/frontend/src/__mocks__/@supabase/supabase-js.ts',
+      },
+      // Bypass AuthGuard in tests — renders children directly
+      {
+        find: /.*\/auth\/AuthGuard$/,
+        replacement: '/Users/dhruviwadhwana/Desktop/Claude project/structural-analysis-tool/frontend/src/__mocks__/AuthGuard.tsx',
+      },
     ],
   },
 })

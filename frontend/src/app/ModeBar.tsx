@@ -21,7 +21,11 @@ const MODE_BUTTONS: ModeButton[] = [
   { mode: 'annotate', label: 'Annotate', shortcut: 'A' },
 ]
 
-export function ModeBar() {
+interface ModeBarProps {
+  onBack?: () => void
+}
+
+export function ModeBar({ onBack }: ModeBarProps = {}) {
   const activeMode = useUiStore((s) => s.activeMode)
   const setActiveMode = useUiStore((s) => s.setActiveMode)
   const isAnalyzing = useResultsStore((s) => s.isAnalyzing)
@@ -43,6 +47,11 @@ export function ModeBar() {
 
   return (
     <div className="mode-bar">
+      {onBack && (
+        <button className="mode-btn" onClick={onBack} title="Back to Projects">
+          ← Projects
+        </button>
+      )}
       {MODE_BUTTONS.map(({ mode, label, shortcut }) => (
         <button
           key={mode}

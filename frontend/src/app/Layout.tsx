@@ -6,10 +6,15 @@ import { MaterialLibrary } from '../panels/MaterialLibrary'
 import { ResultsPanel } from '../panels/ResultsPanel'
 import { SpreadsheetPanel } from '../spreadsheet/SpreadsheetPanel'
 
-export function Layout() {
+interface LayoutProps {
+  projectId?: string | null
+  onBack?: () => void
+}
+
+export function Layout({ projectId: _projectId, onBack }: LayoutProps = {}) {
   return (
     <div className="layout">
-      <ModeBar />
+      <ModeBar onBack={onBack} />
       <div className="workspace">
         <div className="canvas-container">
           <div className="canvas-root">
