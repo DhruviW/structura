@@ -1,12 +1,13 @@
 import { create } from 'zustand'
 import type { User, Session } from '@supabase/supabase-js'
-import { supabase } from './supabaseClient'
+import { supabase, isSupabaseConfigured } from './supabaseClient'
 
 interface AuthState {
   user: User | null
   session: Session | null
   loading: boolean
   error: string | null
+  devMode: boolean
 
   initialize: () => void
   signInWithEmail: (email: string, password: string) => Promise<void>
@@ -20,8 +21,20 @@ export const useAuthStore = create<AuthState>((set) => ({
   session: null,
   loading: true,
   error: null,
+  devMode: !isSupabaseConfigured,
 
   initialize: () => {
+    // Dev mode: skip auth, create a mock user
+    if (!isSupabaseConfigured) {
+      set({
+        user: { id: 'dev-user', email: 'dev@localhost' } as User,
+        session: null,
+        loading: false,
+        devMode: true,
+      })
+      return
+    }
+
     supabase.auth.getSession().then(({ data: { session } }) => {
       set({ session, user: session?.user ?? null, loading: false })
     })
@@ -32,6 +45,7 @@ export const useAuthStore = create<AuthState>((set) => ({
   },
 
   signInWithEmail: async (email, password) => {
+    if (!isSupabaseConfigured) return
     set({ loading: true, error: null })
     const { error } = await supabase.auth.signInWithPassword({ email, password })
     if (error) set({ error: error.message, loading: false })
@@ -39,6 +53,7 @@ export const useAuthStore = create<AuthState>((set) => ({
   },
 
   signUpWithEmail: async (email, password, displayName) => {
+    if (!isSupabaseConfigured) return
     set({ loading: true, error: null })
     const { error } = await supabase.auth.signUp({
       email,
@@ -50,6 +65,7 @@ export const useAuthStore = create<AuthState>((set) => ({
   },
 
   signInWithGoogle: async () => {
+    if (!isSupabaseConfigured) return
     set({ loading: true, error: null })
     const { error } = await supabase.auth.signInWithOAuth({
       provider: 'google',
@@ -59,7 +75,9 @@ export const useAuthStore = create<AuthState>((set) => ({
   },
 
   signOut: async () => {
-    await supabase.auth.signOut()
+    if (isSupabaseConfigured) {
+      await supabase.auth.signOut()
+    }
     set({ user: null, session: null })
   },
 }))

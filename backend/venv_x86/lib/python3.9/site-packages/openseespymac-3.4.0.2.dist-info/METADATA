@@ -1,0 +1,40 @@
+Metadata-Version: 2.1
+Name: openseespymac
+Version: 3.4.0.2
+Summary: The Mac OS version of OpenSeesPy
+Home-page: UNKNOWN
+Author: Dr. Stevan Gavrilovic
+Author-email: gavrilovic@berkeley.edu
+License: UNKNOWN
+Platform: UNKNOWN
+Classifier: Programming Language :: Python :: 3.8
+Classifier: Programming Language :: Python :: 3.9
+Classifier: Operating System :: MacOS
+Requires-Python: >=3.8
+Description-Content-Type: text/markdown
+
+OpenSeesPyMac
+
+OpenSeesPy for the Mac OS. Supports Mac OS 10.13-12 (High Sierra to Monterey)
+
+Requires Python 3.8 or higher <https://www.python.org/downloads/> 
+
+Mac version maintained by:
+
+Dr. Stevan Gavrilovic <gavrilovic@berkeley.edu>,
+University of California Berkeley
+
+GitHub <https://github.com/steva44/OpenSees>
+
+OpenSeesPy Developer:
+
+Minjie Zhu <zhum@oregonstate.edu>
+
+Faculty Research Assistant,
+Civil and Construction Engineering,
+Oregon State University
+
+OpenSeesPy Documentation <https://openseespydoc.readthedocs.io/en/latest/index.html>
+
+
+

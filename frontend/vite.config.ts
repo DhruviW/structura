@@ -10,7 +10,7 @@ export default defineConfig({
     alias: [
       // Mock Handsontable CSS to avoid jsdom resolution errors
       {
-        find: 'handsontable/dist/handsontable.full.min.css',
+        find: /^handsontable\/styles\/.*/,
         replacement: '/Users/dhruviwadhwana/Desktop/Claude project/structural-analysis-tool/frontend/src/__mocks__/empty.css',
       },
       // Mock the entire handsontable and @handsontable/react packages in tests

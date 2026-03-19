@@ -12,4 +12,5 @@ html, body, #root { height: 100%; font-family: -apple-system, BlinkMacSystemFont
 .canvas-root { position: absolute; inset: 0; }
 .sidebar { width: 280px; border-left: 1px solid #ddd; overflow-y: auto; background: #fafafa; }
 .panel { padding: 12px; border-bottom: 1px solid #eee; }
-.bottom-panel { height: 250px; border-top: 1px solid #ddd; background: #fafafa; overflow: auto; }
+.bottom-panel { height: 250px; min-height: 250px; border-top: 1px solid #ddd; background: #fafafa; overflow: hidden; display: flex; flex-direction: column; }
+.bottom-panel > * { flex: 1; min-height: 0; }

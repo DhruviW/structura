@@ -4,13 +4,12 @@ Translates a StructuralModel Pydantic object into an OpenSeesPy in-memory model.
 """
 from __future__ import annotations
 
-import openseespy.opensees as ops
-
 from app.models.structural import StructuralModel, PointLoad
 
 
 def build_opensees_model(model: StructuralModel) -> None:
     """Wipe any existing OpenSeesPy state and build a fresh model."""
+    import openseespy.opensees as ops
     ops.wipe()
     ops.model('basic', '-ndm', 2, '-ndf', 3)
 

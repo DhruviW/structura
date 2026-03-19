@@ -1,4 +1,8 @@
+from __future__ import annotations
+
 import os
+from typing import Optional
+
 from fastapi import Depends, HTTPException
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 
@@ -9,7 +13,7 @@ security = HTTPBearer(auto_error=False)
 
 
 async def get_current_user(
-    credentials: HTTPAuthorizationCredentials | None = Depends(security),
+    credentials: Optional[HTTPAuthorizationCredentials] = Depends(security),
 ) -> dict:
     if not credentials:
         raise HTTPException(status_code=401, detail="Not authenticated")
@@ -19,8 +23,8 @@ async def get_current_user(
 
 
 async def get_optional_user(
-    credentials: HTTPAuthorizationCredentials | None = Depends(security),
-) -> dict | None:
+    credentials: Optional[HTTPAuthorizationCredentials] = Depends(security),
+) -> Optional[dict]:
     if not credentials:
         return None
     return {"id": "dev-user", "email": "dev@example.com"}

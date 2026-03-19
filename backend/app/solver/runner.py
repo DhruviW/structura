@@ -4,8 +4,6 @@ Builds an OpenSeesPy model, runs a static analysis, extracts results.
 """
 from __future__ import annotations
 
-import openseespy.opensees as ops
-
 from app.models.structural import StructuralModel
 from app.models.results import (
     AnalysisResults,
@@ -18,6 +16,8 @@ from app.solver.model_builder import build_opensees_model
 
 def run_linear_static(model: StructuralModel) -> AnalysisResults:
     """Run a linear static analysis and return structured results."""
+    import openseespy.opensees as ops
+
     # ── Build model ───────────────────────────────────────────────────────────
     build_opensees_model(model)
 
