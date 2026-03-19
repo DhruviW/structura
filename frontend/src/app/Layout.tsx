@@ -1,6 +1,6 @@
 import { ModeBar } from './ModeBar'
 import { StatusBar } from './StatusBar'
-import { CanvasRoot } from '../canvas/CanvasRoot'
+import { Canvas3D } from '../canvas3d/Canvas3D'
 import { PropertiesPanel } from '../panels/PropertiesPanel'
 import { LayersPanel } from '../panels/LayersPanel'
 import { MaterialLibrary } from '../panels/MaterialLibrary'
@@ -19,7 +19,7 @@ export function Layout({ projectId: _projectId, onBack }: LayoutProps = {}) {
       <div className="workspace">
         <div className="canvas-container">
           <div className="canvas-root">
-            <CanvasRoot />
+            <Canvas3D />
           </div>
         </div>
         <div className="sidebar">

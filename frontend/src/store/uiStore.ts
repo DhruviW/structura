@@ -13,6 +13,7 @@ export type ActiveMode =
   | 'erase'
 
 export type LayerName = 'geometry' | 'loads' | 'results' | 'annotations' | 'selection'
+export type ViewMode = '3d' | 'plan-xy' | 'elevation-xz' | 'elevation-yz'
 export type AnnotateSubMode = 'text' | 'leader' | 'dimension' | 'line' | 'polyline' | 'rectangle' | 'circle'
 
 export interface SelectedElement {
@@ -63,9 +64,11 @@ interface UiState {
   pendingSupportNodeId: number | null
   pendingLoadNodeId: number | null
   selectionBox: SelectionBox | null
+  viewMode: ViewMode
 }
 
 interface UiActions {
+  setViewMode: (mode: ViewMode) => void
   setActiveMode: (mode: ActiveMode) => void
   setAnnotateSubMode: (mode: AnnotateSubMode) => void
   selectElement: (element: SelectedElement) => void
@@ -106,6 +109,7 @@ const defaultPreviewState: PreviewState = {
 }
 
 const defaultState: UiState = {
+  viewMode: '3d',
   activeMode: 'select',
   annotateSubMode: 'text',
   selectedElements: [],
@@ -129,6 +133,11 @@ const defaultState: UiState = {
 export const useUiStore = create<UiState & UiActions>()(
   immer((set) => ({
     ...defaultState,
+
+    setViewMode: (mode) =>
+      set((state) => {
+        state.viewMode = mode
+      }),
 
     setActiveMode: (mode) =>
       set((state) => {
