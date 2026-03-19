@@ -46,9 +46,19 @@ def debug_openseespy():
         info["openseespy"] = "OK"
     except Exception as e:
         info["openseespy"] = f"FAILED: {e}"
+        # Check what's installed
+        import subprocess
+        result = subprocess.run(["pip", "list"], capture_output=True, text=True)
+        pkgs = [l for l in result.stdout.split("\n") if "opensees" in l.lower()]
+        info["installed_packages"] = pkgs
+        # Check for .so files
+        import glob
+        sos = glob.glob("/usr/local/lib/python*/site-packages/opensees*/**/*.so", recursive=True)
+        info["so_files"] = sos[:10]
+        # Try to get the actual import error
         try:
-            import opensees
-            info["opensees_direct"] = "OK"
+            import openseespy.opensees
         except Exception as e2:
-            info["opensees_direct"] = f"FAILED: {e2}"
+            import traceback
+            info["full_traceback"] = traceback.format_exc()
     return info
